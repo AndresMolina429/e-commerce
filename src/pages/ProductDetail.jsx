@@ -118,6 +118,7 @@ const ProductDetail = () => {
       { relatedProducts.length > 0 ?
         <div className="row">
         <div className="col-md-12 py-4">
+          <h1>Productos Relacionados</h1>
           <ul className="product-list">
             {relatedProducts.map((productRelated) => (
               productRelated.id != product.id && (
