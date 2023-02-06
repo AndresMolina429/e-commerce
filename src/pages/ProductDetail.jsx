@@ -1,7 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Carousel } from "react-bootstrap";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { addProductCartThunk } from "../store/slices/cartProducts.slice";
 import { setProducts } from "../store/slices/products.slice";
 
 const ProductDetail = () => {
@@ -10,9 +12,12 @@ const ProductDetail = () => {
   const [relatedProducts, setRelatedProducts] = useState({});
   const navigate = useNavigate();
 
+  const dispatch = useDispatch()
+
   useEffect(() => {
     axios.get(`https://e-commerce-api-v2.academlo.tech/api/v1/products/${id}`)
       .then(res => setProduct(res.data))
+      setQuantity(1)
   }, [id]);
 
   useEffect(() => {
@@ -31,7 +36,14 @@ const ProductDetail = () => {
     setIndex(selectedIndex);
   };
 
-
+  const addProductCart = () => {
+        const productCart = {
+          quantity: quantity,
+          productId: id
+        }
+        dispatch(addProductCartThunk(productCart))
+  }
+  
   return (
     <>
       <div className="row">
@@ -106,7 +118,7 @@ const ProductDetail = () => {
               </div>
               <div className="row">
                 <div className="col-12 add-to-cart">
-                  <button>Add to Cart
+                  <button onClick={() => addProductCart()}>Add to Cart
                     <i className="fa-solid fa-cart-shopping"></i>
                   </button>
                 </div>
@@ -121,7 +133,7 @@ const ProductDetail = () => {
           <h1>Productos Relacionados</h1>
           <ul className="product-list">
             {relatedProducts.map((productRelated) => (
-              productRelated.id != product.id && (
+              productRelated.id != id && (
               <li className="col-md-4 p-5" key={productRelated.id} onClick={() => navigate(`/product/${productRelated.id}`)}>
                 <div className="product-card">
                   <div className="image">
